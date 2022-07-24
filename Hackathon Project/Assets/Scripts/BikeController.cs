@@ -51,7 +51,6 @@ public class BikeController : MonoBehaviour
         }
         if (done)
         {
-            speed = power/gravity;
             power = 0;
         }
     }
