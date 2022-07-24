@@ -7,7 +7,7 @@ using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
 
 [System.Serializable]
-public class FeatureCollectionData
+public class Data
 {
     public string type;
     public Feature[] features;
@@ -29,9 +29,13 @@ public class Geometry
 public class FeatureLayerQuery : MonoBehaviour
 {
     public string url = "https://services7.arcgis.com/33Tmvrm3G2UZLFK9/ArcGIS/rest/services/Demo_Points/FeatureServer/5/query?f=geojson&where=1=1";
+    public GameObject parent;
+    public GameObject waypoint;
+    public GameObject[] waypoints;
     // Start is called before the first frame update
     void Start()
     {
+        parent = GameObject.Find("ArcGISMap");
         StartCoroutine(GetFeatures());
     }
 
@@ -55,14 +59,21 @@ public class FeatureLayerQuery : MonoBehaviour
     }
     private void CreateGameObjects(string Response)
     {
-        // Deserialize the JSON response from the query.
-        var deserialized = JsonUtility.FromJson<FeatureCollectionData>(Response);
+        int i = 0;
+        Data deserialized = JsonUtility.FromJson<Data>(Response);
 
         foreach (Feature feature in deserialized.features)
         {
             double Longitude = feature.geometry.coordinates[0];
             double Latitude = feature.geometry.coordinates[1];
-            Debug.Log(Longitude + "," + Latitude);
+
+            ArcGISPoint Position = new ArcGISPoint(Longitude, Latitude, 500, new ArcGISSpatialReference(4326));
+
+            GameObject newWaypoint = Instantiate(waypoint, parent.transform);
+            var LocationComponent = newWaypoint.GetComponent<ArcGISLocationComponent>();
+            LocationComponent.enabled = true;
+            LocationComponent.Position = Position;
+            waypoints[i] = newWaypoint;
         }
     }
 }

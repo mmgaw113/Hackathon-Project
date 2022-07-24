@@ -13,12 +13,14 @@ public class BikeController : MonoBehaviour
     private float bikeMass = 26.0f;
     const float gravity = 9.81f;
     public Vector3 direction;
+    public int i = 0;
     [Header("Components")]
     private Rigidbody rb;
     public Transform handleBars;
     public GameObject frontWheel;
     public GameObject backWheel;
     public GameObject driveTrain;
+    public GameObject[] waypoints;
     [Header("StopWatch")]
     const float startTime = 0;
     public float currentTime;
@@ -55,13 +57,32 @@ public class BikeController : MonoBehaviour
     private void FixedUpdate()
     {
         //Movement
-        //UpdatePosition();
+        UpdatePosition();
     }
     public void UpdatePosition()
     {
         if (speed > 0)
         {
-            rb.MovePosition(transform.position + (speed * Time.deltaTime * handleBars.up));
+            //rb.MovePosition(transform.position + (speed * Time.deltaTime * handleBars.up));
+            float distance = Vector3.Distance(transform.position, waypoints[i].transform.position);
+            if(i <= waypoints.Length - 1)
+            {
+                if (distance < 0.5f)
+                {
+                    i++;
+                }
+                if(i == waypoints.Length)
+                {
+                    i = 0;
+                }
+            }
+            else if(i == waypoints.Length)
+            {
+                i = 0;
+            }
+            transform.position = Vector3.MoveTowards(transform.position, waypoints[i].transform.position, speed * Time.deltaTime);
+            Vector3 relativePos = waypoints[i].transform.position - transform.position;
+            transform.rotation = Quaternion.LookRotation(relativePos);
         }
 
     }
