@@ -16,11 +16,11 @@ public class BikeController : MonoBehaviour
     public int i = 0;
     [Header("Components")]
     private Rigidbody rb;
+    public FeatureLayerQuery query;
     public Transform handleBars;
     public GameObject frontWheel;
     public GameObject backWheel;
     public GameObject driveTrain;
-    public GameObject[] waypoints;
     [Header("StopWatch")]
     const float startTime = 0;
     public float currentTime;
@@ -30,6 +30,7 @@ public class BikeController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        query = GameObject.Find("FeatureLayerRequest").GetComponent<FeatureLayerQuery>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -64,24 +65,24 @@ public class BikeController : MonoBehaviour
         if (speed > 0)
         {
             //rb.MovePosition(transform.position + (speed * Time.deltaTime * handleBars.up));
-            float distance = Vector3.Distance(transform.position, waypoints[i].transform.position);
-            if(i <= waypoints.Length - 1)
+            float distance = Vector3.Distance(transform.position, query.waypoints[i].transform.position);
+            if(i <= query.waypoints.Length - 1)
             {
-                if (distance < 0.5f)
+                if (distance < 10)
                 {
                     i++;
                 }
-                if(i == waypoints.Length)
+                if(i == query.waypoints.Length)
                 {
                     i = 0;
                 }
             }
-            else if(i == waypoints.Length)
+            else if(i == query.waypoints.Length)
             {
                 i = 0;
             }
-            transform.position = Vector3.MoveTowards(transform.position, waypoints[i].transform.position, speed * Time.deltaTime);
-            Vector3 relativePos = waypoints[i].transform.position - transform.position;
+            transform.position = Vector3.MoveTowards(transform.position, query.waypoints[i].transform.position, speed * Time.deltaTime);
+            Vector3 relativePos = query.waypoints[i].transform.position - transform.position;
             transform.rotation = Quaternion.LookRotation(relativePos);
         }
 

@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using Esri.ArcGISMapsSDK.Components;
 using Esri.GameEngine.Geometry;
+using Esri.HPFramework;
 
 [System.Serializable]
 public class Data
@@ -66,14 +67,16 @@ public class FeatureLayerQuery : MonoBehaviour
         {
             double Longitude = feature.geometry.coordinates[0];
             double Latitude = feature.geometry.coordinates[1];
+            //double altitude = feature.geometry.coordinates[2];
 
-            ArcGISPoint Position = new ArcGISPoint(Longitude, Latitude, 500, new ArcGISSpatialReference(4326));
-
+            ArcGISPoint Position = new ArcGISPoint(Longitude, Latitude, 75, new ArcGISSpatialReference(4326));
             GameObject newWaypoint = Instantiate(waypoint, parent.transform);
-            var LocationComponent = newWaypoint.GetComponent<ArcGISLocationComponent>();
+            ArcGISLocationComponent LocationComponent = newWaypoint.GetComponent<ArcGISLocationComponent>();
             LocationComponent.enabled = true;
             LocationComponent.Position = Position;
+            LocationComponent.Rotation = new Esri.ArcGISMapsSDK.Utils.GeoCoord.ArcGISRotation(0, 180, 0);
             waypoints[i] = newWaypoint;
+            i++;
         }
     }
 }
